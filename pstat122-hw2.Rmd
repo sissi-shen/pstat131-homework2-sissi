@@ -2,7 +2,9 @@
 title: "pstat131-hw2"
 author: "Sissi Shen"
 date: "2022-10-15"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r}
@@ -11,6 +13,9 @@ abalone = read.csv(file='abalone.csv')
 
 Question 1:\n
 ```{r}
+library(dplyr)
+library(tidymodels)
+library(tidyverse)
 abalone <- abalone %>%
   mutate(age = rings + 1.5)
 hist(abalone$age)
@@ -30,10 +35,11 @@ abalone_test <- testing(abalone_split)
 
 Question 3:
 ```{r}
-abalone <- abalone %>% select(-rings)
+abalone_train <- abalone_train %>% select(-rings)
+abalone_test <- abalone_test %>% select(-rings)
 ```
 \n
-We should not include the variable "rings" because it is bascially the outcome "age" that we want to predict. 
+We should not include the variable "rings" because it is basically the outcome "age" that we want to predict. 
 \n
 ```{r}
 simple_abalone_recipe <- recipe(age ~ ., data = abalone_train)
