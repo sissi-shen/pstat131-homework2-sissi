@@ -3,15 +3,15 @@ title: "pstat131-hw2"
 author: "Sissi Shen"
 date: "2022-10-15"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r}
 abalone = read.csv(file='abalone.csv')
 ```
 
-Question 1:\n
+Question 1:
 ```{r}
 library(dplyr)
 library(tidymodels)
@@ -20,9 +20,9 @@ abalone <- abalone %>%
   mutate(age = rings + 1.5)
 hist(abalone$age)
 ```
-\n
-From the histogram, we can tell that the distribution of abalone's age is skewed to the left, which indicates that most abalone in our data sample are relatively young.
-\n
+
+From the histogram, we can tell that the distribution of abalone's age is skewed to the right, which indicates that most abalone in our data sample are relatively young.
+
 
 Question 2:
 ```{r}
@@ -31,16 +31,16 @@ abalone_split <- initial_split(abalone, prop=0.8, strata = age)
 abalone_train <- training(abalone_split)
 abalone_test <- testing(abalone_split)
 ```
-\n
+
 
 Question 3:
 ```{r}
 abalone_train <- abalone_train %>% select(-rings)
 abalone_test <- abalone_test %>% select(-rings)
 ```
-\n
+
 We should not include the variable "rings" because it is basically the outcome "age" that we want to predict. 
-\n
+
 ```{r}
 simple_abalone_recipe <- recipe(age ~ ., data = abalone_train)
 simple_abalone_recipe
@@ -54,14 +54,14 @@ abalone_recipe <- recipe(age ~ ., data = abalone_train) %>%
   step_center(all_numeric_predictors()) %>%
   step_scale(all_numeric_predictors())
 ```
-\n
+
 
 Question 4:
 ```{r}
 lm_model <- linear_reg() %>%
   set_engine("lm")
 ```
-\n
+
 
 Question 5:
 ```{r}
@@ -69,7 +69,7 @@ lm_wflow <- workflow() %>%
   add_model(lm_model) %>% 
   add_recipe(abalone_recipe)
 ```
-\n
+
 
 Question 6:
 ```{r}
@@ -82,9 +82,9 @@ lm_fit %>%
 H_abalone <- data.frame(type = "F", longest_shell = 0.50, diameter = 0.10, height = 0.30, whole_weight = 4, shucked_weight = 1, viscera_weight = 2, shell_weight = 1)
 predict(lm_fit, H_abalone)
 ```
-\n
+
 From the model's prediction, the age of our hypothetical female abalone should be 25.87 years old.
-\n
+
 
 Question 7:
 ```{r}
@@ -96,5 +96,5 @@ rmse(abalone_train_res, truth = age, estimate = .pred)
 abalone_metrics <- metric_set(rmse, rsq, mae)
 abalone_metrics(abalone_train_res, truth = age, estimate = .pred)
 ```
-\n
+
 The model has a root mean squared error (RMSE) of 2.138, an $R^2$ of 0.5575 and a mean absolute error (MAE) of 1.542. An $R^2$ value of 0.5575 means that the model can explain 55.75% of the variance of the observed data. 
